@@ -264,7 +264,7 @@ export default function Analytics({ categories, transactions }: AnalyticsProps) 
             {selectedDay ? (
               <>
                 <span>📅 Ngày {selectedDay.day} tháng 7:</span>
-                <span className="font-bold text-kawaii-pink-500 text-sm">₫{selectedDay.amount.toLocaleString()}</span>
+                <span className="font-bold text-kawaii-pink-500 text-sm">¥{selectedDay.amount.toLocaleString()}</span>
               </>
             ) : (
               <span className="italic text-gray-400">Click vào các nút chấm tròn xanh để xem chi tiết chi tiêu nhen! 🥰👉</span>
@@ -275,11 +275,11 @@ export default function Analytics({ categories, transactions }: AnalyticsProps) 
           <div className="grid grid-cols-2 gap-3 mt-3">
             <div className="bg-white/80 p-2.5 rounded-xl border border-kawaii-pink-200 text-center">
               <span className="text-[9px] text-gray-400 uppercase font-bold">Ngày tiêu cao nhất</span>
-              <p className="font-display font-bold text-sm text-rose-400">N.1 (₫1,500)</p>
+              <p className="font-display font-bold text-sm text-rose-400">N.1 (¥1,500)</p>
             </div>
             <div className="bg-white/80 p-2.5 rounded-xl border border-kawaii-pink-200 text-center">
               <span className="text-[9px] text-gray-400 uppercase font-bold">Ngày tiết kiệm nhất</span>
-              <p className="font-display font-bold text-sm text-emerald-500">N.3 (₫180)</p>
+              <p className="font-display font-bold text-sm text-emerald-500">N.3 (¥180)</p>
             </div>
           </div>
         </motion.div>
@@ -358,7 +358,7 @@ export default function Analytics({ categories, transactions }: AnalyticsProps) 
             <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none bg-white rounded-full w-24 h-24 shadow-inner border border-dashed border-kawaii-pink-200">
               <span className="text-[10px] font-display font-medium text-gray-400">Tổng Chi Phí</span>
               <span className="text-sm font-display font-bold text-kawaii-pink-500">
-                ₫{totalExpenseAmount.toLocaleString()}
+                ¥{totalExpenseAmount.toLocaleString()}
               </span>
             </div>
           </div>
@@ -400,7 +400,7 @@ export default function Analytics({ categories, transactions }: AnalyticsProps) 
 
                 <div className="text-right flex items-center gap-2">
                   <span className="text-xs font-mono font-semibold text-gray-600">
-                    ₫{cat.amount.toLocaleString()}
+                    ¥{cat.amount.toLocaleString()}
                   </span>
                   <span
                     className="text-[10px] font-display font-bold px-1.5 py-0.5 rounded text-white"
@@ -421,7 +421,7 @@ export default function Analytics({ categories, transactions }: AnalyticsProps) 
         <div>
           <h4 className="text-xs font-display font-bold text-amber-900">Mẹo Tiết Kiệm từ Bé Thỏ 🐰</h4>
           <p className="text-[11px] text-amber-800 leading-relaxed mt-0.5">
-            Dạo này bạn đang chi tiêu nhiều cho <span className="font-bold">Ăn uống</span> đó nhen! Thử tự nấu cơm hộp bento cute tại nhà vừa ngon lại vừa tiết kiệm được ₫500 mỗi tuần nè! Chúc bạn tích luỹ mau đạt mục tiêu nhé!
+            Dạo này bạn đang chi tiêu nhiều cho <span className="font-bold">Ăn uống</span> đó nhen! Thử tự nấu cơm hộp bento cute tại nhà vừa ngon lại vừa tiết kiệm được ¥500 mỗi tuần nè! Chúc bạn tích luỹ mau đạt mục tiêu nhé!
           </p>
         </div>
       </div>

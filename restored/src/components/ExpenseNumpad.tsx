@@ -276,7 +276,7 @@ export default function ExpenseNumpad({ categories, wallets, onSave, onClose }: 
             <div className="text-right">
               <span className="text-xs font-mono text-gray-400 block h-4">{expression}</span>
               <span className="font-display font-semibold text-2xl text-kawaii-pink-500 break-all">
-                ₫{displayValue}
+                ¥{displayValue}
               </span>
             </div>
           </div>

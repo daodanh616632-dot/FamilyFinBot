@@ -20,7 +20,7 @@ export default function Wallets({ wallets, onAddWallet, onDeleteWallet, onUpdate
   const [newWalletName, setNewWalletName] = useState('');
   const [newWalletBalance, setNewWalletBalance] = useState('');
   const [newWalletIcon, setNewWalletIcon] = useState('💵');
-  const [newWalletCurrency, setNewWalletCurrency] = useState('₫');
+  const [newWalletCurrency, setNewWalletCurrency] = useState('¥');
 
   // Math totals
   const totalAssets = wallets
@@ -56,7 +56,7 @@ export default function Wallets({ wallets, onAddWallet, onDeleteWallet, onUpdate
     setNewWalletName('');
     setNewWalletBalance('');
     setNewWalletIcon('💵');
-    setNewWalletCurrency('₫');
+    setNewWalletCurrency('¥');
     setShowAddModal(false);
   };
 
@@ -74,7 +74,7 @@ export default function Wallets({ wallets, onAddWallet, onDeleteWallet, onUpdate
             <Sparkles size={12} className="animate-pulse" /> TÀI SẢN RÒNG HIỆN TẠI
           </p>
           <h1 id="net-assets-display" className="text-3xl font-display font-extrabold text-kawaii-pink-600 mt-1 mb-4">
-            ₫{netAssets.toLocaleString()}
+            ¥{netAssets.toLocaleString()}
           </h1>
 
           {/* Asset vs Debt grid */}
@@ -82,13 +82,13 @@ export default function Wallets({ wallets, onAddWallet, onDeleteWallet, onUpdate
             <div className="bg-white/80 backdrop-blur-sm border border-white/60 p-3 rounded-2xl shadow-sm text-left">
               <span className="text-[10px] text-gray-400 font-bold uppercase block">Tổng tài sản 💵</span>
               <span className="font-display font-bold text-emerald-600 text-md">
-                +₫{totalAssets.toLocaleString()}
+                +¥{totalAssets.toLocaleString()}
               </span>
             </div>
             <div className="bg-white/80 backdrop-blur-sm border border-white/60 p-3 rounded-2xl shadow-sm text-left">
               <span className="text-[10px] text-gray-400 font-bold uppercase block">Món nợ tổng 🏦</span>
               <span className="font-display font-bold text-gray-400 text-md">
-                -₫{totalDebts.toLocaleString()}
+                -¥{totalDebts.toLocaleString()}
               </span>
             </div>
           </div>
@@ -139,7 +139,7 @@ export default function Wallets({ wallets, onAddWallet, onDeleteWallet, onUpdate
                     <p className={`font-display font-bold text-lg ${
                       isDebt ? 'text-gray-400 font-semibold' : 'text-gray-800'
                     }`}>
-                      {isDebt ? '-' : ''}₫{Math.abs(wallet.balance).toLocaleString()}
+                      {isDebt ? '-' : ''}¥{Math.abs(wallet.balance).toLocaleString()}
                     </p>
                     {isDebt && (
                       <span className="text-[9px] text-rose-400 font-semibold flex items-center gap-0.5 justify-end">

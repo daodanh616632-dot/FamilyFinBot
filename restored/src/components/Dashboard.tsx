@@ -183,7 +183,7 @@ export default function Dashboard({
                 <TrendingUp size={11} className="text-emerald-400" /> Tổng Thu Nhập
               </p>
               <p className="font-display font-bold text-lg text-emerald-500">
-                +₫{totalIncome.toLocaleString()}
+                +¥{totalIncome.toLocaleString()}
               </p>
             </div>
             <div className="pl-4">
@@ -191,7 +191,7 @@ export default function Dashboard({
                 <TrendingDown size={11} className="text-rose-400" /> Tổng Chi Tiêu
               </p>
               <p className="font-display font-bold text-lg text-rose-400">
-                -₫{totalExpense.toLocaleString()}
+                -¥{totalExpense.toLocaleString()}
               </p>
             </div>
           </div>
@@ -201,7 +201,7 @@ export default function Dashboard({
             <span className={`font-display font-bold text-xl px-2.5 py-0.5 rounded-full ${
               netBalance >= 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-rose-50 text-rose-500 border border-rose-200'
             }`}>
-              ₫{netBalance.toLocaleString()}
+              ¥{netBalance.toLocaleString()}
             </span>
           </div>
         </div>
@@ -241,7 +241,7 @@ export default function Dashboard({
                   }}
                   className="text-[11px] font-display font-semibold text-kawaii-pink-500 hover:underline"
                 >
-                  Sửa: ₫{budget.limit.toLocaleString()}
+                  Sửa: ¥{budget.limit.toLocaleString()}
                 </button>
               )}
             </div>
@@ -262,8 +262,8 @@ export default function Dashboard({
           </div>
 
           <div className="flex justify-between items-center text-[11px] text-gray-400 font-medium mt-1.5 px-1">
-            <span>Đã tiêu: ₫{totalExpense.toLocaleString()}</span>
-            <span>Còn lại: ₫{Math.max(0, budget.limit - totalExpense).toLocaleString()}</span>
+            <span>Đã tiêu: ¥{totalExpense.toLocaleString()}</span>
+            <span>Còn lại: ¥{Math.max(0, budget.limit - totalExpense).toLocaleString()}</span>
           </div>
         </div>
 
@@ -330,7 +330,7 @@ export default function Dashboard({
 
               <form onSubmit={handleGoalContributionSubmit} className="flex gap-2">
                 <div className="relative flex-1">
-                  <span className="absolute left-2.5 top-1.5 text-xs text-gray-400 font-mono">₫</span>
+                  <span className="absolute left-2.5 top-1.5 text-xs text-gray-400 font-mono">¥</span>
                   <input
                     id="goal-contrib-input"
                     type="number"
@@ -414,7 +414,7 @@ export default function Dashboard({
                       <span className={`font-display font-bold text-sm shrink-0 ${
                         tx.type === 'income' ? 'text-emerald-500' : 'text-rose-400'
                       }`}>
-                        {tx.type === 'income' ? '+' : '-'}₫{tx.amount.toLocaleString()}
+                        {tx.type === 'income' ? '+' : '-'}¥{tx.amount.toLocaleString()}
                       </span>
                       
                       {/* Deletion btn */}
