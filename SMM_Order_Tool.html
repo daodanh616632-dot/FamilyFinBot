@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SMM Facebook Tool</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:#0f172a; color:#e2e8f0; min-height:100vh; padding:12px; }
+        .container { max-width:720px; margin:0 auto; }
+        .card { background:#1e293b; border:1px solid #334155; border-radius:16px; padding:20px; margin-bottom:12px; }
+        .header { text-align:center; padding-bottom:16px; margin-bottom:16px; border-bottom:1px solid #334155; }
+        .header h1 { font-size:22px; font-weight:700; background:linear-gradient(135deg,#3b82f6,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .header .badge { font-size:11px; background:#1e40af; color:#93c5fd; padding:3px 10px; border-radius:20px; display:inline-block; margin-top:4px; }
+
+        .tabs { display:flex; gap:4px; margin-bottom:16px; background:#0f172a; border-radius:12px; padding:4px; border:1px solid #334155; }
+        .tab { flex:1; text-align:center; padding:10px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; color:#64748b; touch-action:manipulation; transition:all .2s; }
+        .tab:hover { color:#94a3b8; }
+        .tab.active { background:#3b82f6; color:#fff; box-shadow:0 2px 10px rgba(59,130,246,.3); }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
+
+        .apikey-box { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px 14px; margin-bottom:12px; }
+        .apikey-row { display:flex; gap:8px; }
+        .apikey-row input { flex:1; padding:9px 12px; background:#1e293b; border:1px solid #475569; border-radius:8px; color:#e2e8f0; font-size:14px; }
+        .apikey-row input:focus { outline:none; border-color:#3b82f6; }
+        .apikey-hint { font-size:10px; color:#475569; margin-top:4px; }
+        .apikey-status { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 14px; margin-bottom:12px; font-size:12px; color:#94a3b8; }
+
+        .balance-row { display:flex; justify-content:space-between; align-items:center; background:#0f172a; border-radius:10px; padding:10px 14px; margin-bottom:14px; border:1px solid #334155; }
+        .balance-row .label { font-size:11px; color:#64748b; }
+        .balance-row .amount { font-size:20px; font-weight:700; color:#22c55e; }
+        .balance-row .refresh { cursor:pointer; background:#334155; border:none; color:#94a3b8; padding:5px 12px; border-radius:8px; font-size:11px; touch-action:manipulation; }
+
+        .reaction-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:14px; }
+        @media (max-width:400px) { .reaction-grid { grid-template-columns:repeat(2,1fr); } }
+        .reaction-btn { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 4px; text-align:center; cursor:pointer; transition:all .2s; touch-action:manipulation; }
+        .reaction-btn:hover { border-color:#6366f1; background:#1e293b; }
+        .reaction-btn.selected { border-color:#3b82f6; background:#1e3a5f; }
+        .reaction-btn .emoji { font-size:24px; display:block; }
+        .reaction-btn .name { font-size:10px; color:#94a3b8; }
+        .reaction-btn .price { font-size:11px; color:#22c55e; font-weight:600; }
+        .reaction-btn .svcid { font-size:9px; color:#475569; }
+
+        .form-group { margin-bottom:12px; }
+        .form-group label { display:block; font-size:12px; font-weight:500; color:#94a3b8; margin-bottom:5px; }
+        .form-group select, .form-group input, .form-group textarea { width:100%; padding:10px 14px; background:#0f172a; border:1px solid #334155; border-radius:10px; color:#e2e8f0; font-size:14px; font-family:inherit; }
+        .form-group select:focus, .form-group input:focus, .form-group textarea:focus { outline:none; border-color:#3b82f6; }
+        .form-group select option { background:#1e293b; }
+        .form-group textarea { resize:vertical; min-height:60px; }
+
+        .btn-order { width:100%; padding:13px; background:linear-gradient(135deg,#3b82f6,#6366f1); border:none; border-radius:10px; color:#fff; font-size:15px; font-weight:700; cursor:pointer; touch-action:manipulation; }
+        .btn-order:disabled { opacity:.5; cursor:not-allowed; }
+
+        .status-box { padding:10px 14px; border-radius:10px; margin-top:12px; font-size:12px; display:none; }
+        .status-box.show { display:block; }
+        .status-box.success { background:rgba(34,197,94,.1); border:1px solid #22c55e; color:#22c55e; }
+        .status-box.error { background:rgba(239,68,68,.1); border:1px solid #ef4444; color:#ef4444; }
+        .status-box.info { background:rgba(59,130,246,.1); border:1px solid #3b82f6; color:#60a5fa; }
+        .status-box.loading { background:rgba(234,179,8,.1); border:1px solid #eab308; color:#eab308; }
+        .status-box .sb-title { font-weight:600; margin-bottom:2px; }
+        .status-box .sb-detail { font-family:monospace; font-size:11px; word-break:break-all; }
+
+        .svc-info { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px; margin-bottom:12px; }
+        .svc-info .sname { font-weight:600; font-size:14px; }
+        .svc-info .sdetail { font-size:11px; color:#64748b; margin-top:2px; }
+        .svc-info .sprice { font-size:13px; color:#22c55e; font-weight:600; margin-top:4px; }
+
+        .deposit-method { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:14px; margin-bottom:10px; }
+        .deposit-method .dm-title { font-weight:600; font-size:14px; margin-bottom:8px; }
+        .deposit-method .dm-row { display:flex; justify-content:space-between; padding:5px 0; font-size:12px; border-bottom:1px solid #1e293b; }
+        .deposit-method .dm-row:last-child { border:none; }
+        .deposit-method .dm-label { color:#94a3b8; }
+        .deposit-method .dm-value { color:#e2e8f0; font-weight:500; }
+        .deposit-qr { text-align:center; padding:20px; background:#fff; border-radius:12px; margin-bottom:10px; }
+        .deposit-qr img { max-width:200px; border-radius:8px; }
+        .deposit-qr .qr-label { font-size:11px; color:#64748b; margin-top:6px; }
+
+        .check-row { display:flex; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid #334155; }
+        .check-row input { flex:1; padding:9px 12px; background:#0f172a; border:1px solid #334155; border-radius:8px; color:#e2e8f0; font-size:13px; }
+        .check-row input:focus { outline:none; border-color:#3b82f6; }
+        .check-btn { padding:9px 16px; background:#334155; border:none; color:#e2e8f0; border-radius:8px; font-size:12px; cursor:pointer; white-space:nowrap; }
+
+        .history-item { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #1e293b; font-size:12px; }
+        .history-item:last-child { border:none; }
+        .history-item .oid { color:#60a5fa; font-weight:600; }
+        .history-item .osvc { font-size:11px; color:#94a3b8; }
+        .history-item .otime { font-size:10px; color:#475569; }
+        .ostatus { padding:2px 8px; border-radius:10px; font-size:10px; font-weight:600; }
+        .ostatus.Completed { background:rgba(34,197,94,.15); color:#22c55e; }
+        .ostatus.Processing,.ostatus.Inprogress { background:rgba(234,179,8,.15); color:#eab308; }
+        .ostatus.Pending { background:rgba(148,163,184,.15); color:#94a3b8; }
+        .ostatus.Partial { background:rgba(249,115,22,.15); color:#f97316; }
+        .ostatus.Canceled { background:rgba(239,68,68,.15); color:#ef4444; }
+        .empty { text-align:center; padding:20px; color:#475569; font-size:12px; }
+
+        .spinner { display:inline-block; width:16px; height:16px; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite; vertical-align:middle; margin-right:6px; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .toast-fixed { position:fixed; bottom:12px; left:12px; right:12px; padding:12px 16px; border-radius:10px; font-size:13px; font-weight:500; transform:translateY(100px); opacity:0; transition:all .3s; z-index:9999; }
+        .toast-fixed.show { transform:translateY(0); opacity:1; }
+        .toast-fixed.success { background:#16a34a; color:#fff; }
+        .toast-fixed.error { background:#dc2626; color:#fff; }
+        .toast-fixed.info { background:#2563eb; color:#fff; }
+
+        .note-box { background:rgba(234,179,8,.08); border:1px solid rgba(234,179,8,.2); border-radius:10px; padding:10px 14px; font-size:11px; color:#eab308; margin-top:8px; }
+        .note-box a { color:#60a5fa; }
+
+        @media (max-width:500px) { body { padding:8px; } .card { padding:14px; } .header h1 { font-size:18px; } .tab { font-size:12px; padding:8px 6px; } }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<div class="card" style="padding:16px 20px;">
+    <div class="header" style="margin:0;padding:0;border:none;">
+        <h1>&#128247; Tool Facebook</h1>
+        <div class="badge">Like &amp; Comment | Vi&#7879;t Nam</div>
+    </div>
+</div>
+
+<div class="card">
+    <!-- API Key -->
+    <div class="apikey-box" id="apikeySection">
+        <div class="apikey-row">
+            <input type="password" id="apikeyInput" placeholder="Nh&#7853;p API Key">
+            <button onclick="saveApiKey()" style="padding:9px 14px;background:#3b82f6;color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;white-space:nowrap;">L&#432;u</button>
+        </div>
+        <div class="apikey-hint">Key l&#432;u trong m&#225;y, ch&#7881; nh&#7853;p 1 l&#7847;n</div>
+    </div>
+    <div class="apikey-status" id="apikeyStatus" style="display:none;">
+        &#128274; &#272;&#227; c&#243; API Key | <span style="color:#60a5fa;cursor:pointer;text-decoration:underline;" onclick="showApiKeyInput()">Thay &#273;&#7893;i</span>
+        | <span style="color:#f59e0b;font-size:11px;">Key an to&#224;n, ch&#7881; l&#432;u tr&#234;n thi&#7871;t b&#7883; b&#7841;n</span>
+    </div>
+
+    <!-- Balance -->
+    <div class="balance-row">
+        <div><div class="label">S&#7889; d&#432;</div><div class="amount" id="balanceDisplay">...</div></div>
+        <button class="refresh" onclick="checkBalance()">Refresh</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active" data-tab="camxuc" onclick="switchTab('camxuc',this)">&#128077; C&#7843;m x&#250;c</div>
+        <div class="tab" data-tab="binhluan" onclick="switchTab('binhluan',this)">&#128172; B&#236;nh lu&#7853;n</div>
+        <div class="tab" data-tab="naptien" onclick="switchTab('naptien',this)">&#128176; N&#7841;p ti&#7873;n</div>
+    </div>
+
+    <!-- TAB: CAM XUC -->
+    <div class="tab-content active" id="tab-camxuc">
+        <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:#cbd5e1;">&#128071; Ch&#7885;n c&#7843;m x&#250;c</div>
+        <div class="reaction-grid" id="reactionGrid"></div>
+        <div class="form-group"><label>Link b&#224;i vi&#7871;t</label><input type="url" id="linkInput" placeholder="https://facebook.com/..."></div>
+        <div class="form-group"><label>S&#7889; l&#432;&#7907;ng</label><input type="number" id="qtyInput" placeholder="Nh&#7853;p s&#7889; l&#432;&#7907;ng"></div>
+        <button class="btn-order" id="orderBtn" onclick="placeOrder()">&#10133; &#272;&#7863;t h&#224;ng</button>
+        <div class="status-box" id="orderStatus"></div>
+    </div>
+
+    <!-- TAB: BINH LUAN -->
+    <div class="tab-content" id="tab-binhluan">
+        <div class="svc-info">
+            <div class="sname">&#128172; Facebook T&#249;y ch&#7881;nh Comment</div>
+            <div class="sdetail">Vi&#7879;t Nam | &#10032;&#10032; &#7894;n &#273;&#7883;nh</div>
+            <div class="sprice">32.001 VN&#272; / 1000</div>
+        </div>
+        <div class="form-group"><label>Link b&#224;i vi&#7871;t</label><input type="url" id="commentLink" placeholder="https://facebook.com/..."></div>
+        <div class="form-group"><label>S&#7889; l&#432;&#7907;ng comment</label><input type="number" id="commentQty" placeholder="Nh&#7853;p s&#7889; l&#432;&#7907;ng"></div>
+        <div class="form-group"><label>N&#7897;i dung comment</label><textarea id="commentContent" placeholder="Ví d&#7909;: B&#224;i vi&#7871;t hay qu&#225;!, Tuy&#7879;t v&#7901;i;..." style="min-height:60px;"></textarea></div>
+        <button class="btn-order" id="commentOrderBtn" onclick="placeCommentOrder()">&#10133; &#272;&#7863;t comment</button>
+        <div class="status-box" id="commentStatus"></div>
+    </div>
+
+    <!-- TAB: NAP TIEN -->
+    <div class="tab-content" id="tab-naptien">
+        <div class="balance-row" style="margin-bottom:14px;">
+            <div><div class="label">S&#7889; d&#432; hi&#7879;n t&#7841;i</div><div class="amount" id="balanceDisplay2">...</div></div>
+            <button class="refresh" onclick="checkBalance()">Refresh</button>
+        </div>
+
+        <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:#cbd5e1;">&#128179; Qu&#233;t QR &#273;&#7875; n&#7841;p ti&#7873;n</div>
+
+        <!-- QR MB Bank -->
+        <div class="deposit-method">
+            <div class="dm-title">&#127974; MB Bank</div>
+            <div class="deposit-qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=00020101021138520010A0000007270127000697041601234567890208MBTransfer53037045802VN62180812NAP+SODIENTHOAI6304A1C2" alt="QR MB Bank">
+                <div class="qr-label">Qu&#233;t QR &#273;&#7875; chuy&#7875;n kho&#7843;n MB Bank</div>
+            </div>
+            <div class="dm-row"><span class="dm-label">Ch&#7911; t&#224;i kho&#7843;n</span><span class="dm-value">NGUYEN VAN A</span></div>
+            <div class="dm-row"><span class="dm-label">S&#7889; TK</span><span class="dm-value" style="color:#60a5fa;font-size:14px;letter-spacing:1px;">0123456789</span></div>
+            <div class="dm-row"><span class="dm-label">N&#7897;i dung CK</span><span class="dm-value" style="color:#f59e0b;">NAP + S&#7889; &#272;i&#7879;n tho&#7841;i</span></div>
+        </div>
+
+        <!-- QR Vietcombank -->
+        <div class="deposit-method">
+            <div class="dm-title">&#128179; Vietcombank</div>
+            <div class="deposit-qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=00020101021138520010A0000007270127000697041601234567890208VCBTransfer53037045802VN62180812NAP+SODIENTHOAI6304A1C2" alt="QR Vietcombank">
+                <div class="qr-label">Qu&#233;t QR &#273;&#7875; chuy&#7875;n kho&#7843;n Vietcombank</div>
+            </div>
+            <div class="dm-row"><span class="dm-label">Ch&#7911; t&#224;i kho&#7843;n</span><span class="dm-value">NGUYEN VAN A</span></div>
+            <div class="dm-row"><span class="dm-label">S&#7889; TK</span><span class="dm-value" style="color:#60a5fa;font-size:14px;letter-spacing:1px;">9876543210</span></div>
+            <div class="dm-row"><span class="dm-label">N&#7897;i dung CK</span><span class="dm-value" style="color:#f59e0b;">NAP + S&#7889; &#272;i&#7879;n tho&#7841;i</span></div>
+        </div>
+
+        <div class="note-box">&#9888; Sau khi chuy&#7873;n kho&#7843;n, li&#234;n h&#7879; admin qua Zalo/Telegram &#273;&#7875; c&#7897;ng ti&#7873;n.</div>
+
+        <div style="font-size:13px;font-weight:600;margin:14px 0 10px;color:#cbd5e1;">&#128179; N&#7841;p th&#7847; c&#224;o</div>
+        <div class="deposit-method">
+            <div class="dm-row"><span class="dm-label">Viettel</span><span class="dm-value">10.000 - 500.000 &#273;</span></div>
+            <div class="dm-row"><span class="dm-label">Mobifone</span><span class="dm-value">10.000 - 500.000 &#273;</span></div>
+            <div class="dm-row"><span class="dm-label">Vinaphone</span><span class="dm-value">10.000 - 500.000 &#273;</span></div>
+        </div>
+    </div>
+
+    <!-- Check Order -->
+    <div class="check-row">
+        <input type="number" id="checkId" placeholder="Tra c&#7913;u Order ID...">
+        <button class="check-btn" onclick="checkOrder()">Tra</button>
+    </div>
+    <div class="status-box" id="checkStatus"></div>
+</div>
+
+<!-- History -->
+<div class="card">
+    <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:#cbd5e1;">&#128195; L&#7883;ch s&#7915; &#273;&#417;n h&#224;ng</div>
+    <div id="historyList"><div class="empty">Ch&#432;a c&#243; &#273;&#417;n h&#224;ng n&#224;o.</div></div>
+</div>
+
+</div>
+<div class="toast-fixed" id="toast"></div>
+
+<script>
+const API_URL = 'https://smmapir.com/api/v2';
+let API_KEY = localStorage.getItem('smm_api_key') || '';
+const VND_RATE = 25500;
+const CORS_PROXY = 'https://corsproxy.io/?url=';
+const CORS_PROXY2 = 'https://api.allorigins.win/raw?url=';
+
+const REACTIONS = [
+    {id:5401, emoji:'&#128077;', name:'Like'},
+    {id:5402, emoji:'&#10084;&#65039;', name:'Y&#234;u th&#237;ch'},
+    {id:5403, emoji:'&#128514;', name:'Haha'},
+    {id:5404, emoji:'&#128562;', name:'Wow'},
+    {id:5405, emoji:'&#128546;', name:'Bu&#7891;n'},
+    {id:5406, emoji:'&#128545;', name:'Gi&#7853;n d&#7919;'},
+    {id:5407, emoji:'&#129392;', name:'Th&#432;&#417;ng th&#432;&#417;ng'},
+    {id:5408, emoji:'&#128079;', name:'All c&#7843;m x&#250;c'}
+];
+const REACTIONS_MAP = {};
+REACTIONS.forEach(r => REACTIONS_MAP[r.id] = r);
+
+let selectedService = null;
+let priceCache = {};
+let orderHistory = JSON.parse(localStorage.getItem('smm_order_history') || '[]');
+
+function escHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function formatVND(a){return Math.round(a).toLocaleString('vi-VN')+' VN\u0110';}
+
+function showToast(m,t){
+    const e=document.getElementById('toast');e.textContent=m;e.className='toast-fixed '+t;e.classList.add('show');
+    setTimeout(()=>e.classList.remove('show'),3000);
+}
+function showStatus(el,t,d,type){el.className='status-box show '+type;el.innerHTML='<div class="sb-title">'+t+'</div>'+(d?'<div class="sb-detail"><pre>'+escHtml(typeof d==='string'?d:JSON.stringify(d,null,2))+'</pre></div>':'');}
+function hideStatus(el){el.className='status-box';el.innerHTML='';}
+
+function switchTab(tab,el){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('tab-'+tab).classList.add('active');
+}
+
+function saveApiKey(){
+    const k=document.getElementById('apikeyInput').value.trim();
+    if(!k){showToast('Nhập API Key.','error');return;}
+    API_KEY=k;localStorage.setItem('smm_api_key',k);
+    document.getElementById('apikeySection').style.display='none';
+    document.getElementById('apikeyStatus').style.display='block';
+    document.getElementById('apikeyInput').value='';
+    showToast('Đã lưu API Key!','success');
+    checkBalance();loadServicePrices();
+}
+function showApiKeyInput(){document.getElementById('apikeySection').style.display='block';document.getElementById('apikeyStatus').style.display='none';}
+function initApiKey(){
+    if(API_KEY){document.getElementById('apikeySection').style.display='none';document.getElementById('apikeyStatus').style.display='block';}
+    else{document.getElementById('apikeySection').style.display='block';document.getElementById('apikeyStatus').style.display='none';}
+}
+
+// ===== API CALL =====
+async function callAPI(params){
+    const b=new URLSearchParams();
+    b.append('key',API_KEY);
+    Object.entries(params).forEach(([k,v])=>b.append(k,v));
+    const bodyStr = b.toString();
+
+    const proxies = [
+        null,
+        CORS_PROXY,
+        CORS_PROXY2
+    ];
+    for (let p of proxies) {
+        try {
+            let url = API_URL;
+            if (p) url = p + encodeURIComponent(API_URL);
+            const r = await fetch(url, {
+                method:'POST',
+                headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                body:bodyStr
+            });
+            if (r.ok) return await r.json();
+        } catch(e) { continue; }
+    }
+    throw new Error('Khong the ket noi (CORS)');
+}
+
+async function checkBalance(){
+    try{
+        const d=await callAPI({action:'balance'});
+        const v=formatVND(parseFloat(d.balance)*VND_RATE);
+        document.getElementById('balanceDisplay').textContent=v;
+        document.getElementById('balanceDisplay2').textContent=v;
+    }catch(e){
+        document.getElementById('balanceDisplay').textContent='L&#7895;i k&#7871;t n&#7889;i';
+        document.getElementById('balanceDisplay2').textContent='L&#7895;i k&#7871;t n&#7889;i';
+    }
+}
+
+async function loadServicePrices(){
+    try{
+        const d=await callAPI({action:'services'});
+        (Array.isArray(d)?d:[]).forEach(s=>{
+            if(REACTIONS_MAP[s.service]){
+                priceCache[s.service]={rate:parseFloat(s.rate),min:s.min,max:s.max};
+            }
+        });
+    }catch(e){}
+    renderReactions();
+}
+
+function renderReactions(){
+    const g=document.getElementById('reactionGrid');
+    g.innerHTML=REACTIONS.map(r=>{
+        const p=priceCache[r.id]||{rate:0,min:10,max:5000};
+        const sel=selectedService===r.id?'selected':'';
+        return '<div class="reaction-btn '+sel+'" onclick="selectReaction('+r.id+')" data-id="'+r.id+'">'+
+            '<span class="emoji">'+r.emoji+'</span>'+
+            '<div class="name">'+r.name+'</div>'+
+            '<div class="price">'+formatVND(p.rate*VND_RATE)+'/k</div>'+
+            '<div class="svcid">#'+r.id+'</div></div>';
+    }).join('');
+}
+
+function selectReaction(id){
+    const numId = parseInt(id, 10);
+    selectedService = numId;
+    document.querySelectorAll('.reaction-btn').forEach(e=>e.classList.remove('selected'));
+    document.querySelector('.reaction-btn[data-id="'+numId+'"]')?.classList.add('selected');
+    const p=priceCache[numId]||{min:10,max:5000};
+    const r=REACTIONS_MAP[numId];
+    document.getElementById('qtyInput').placeholder=(r?r.name:'')+' ('+p.min+'-'+p.max+')';
+    hideStatus(document.getElementById('orderStatus'));
+}
+
+async function placeOrder(){
+    if(!selectedService){showToast('Chọn cảm xúc.','error');return;}
+    const link=document.getElementById('linkInput').value.trim();
+    if(!link){showToast('Nhập link.','error');return;}
+    const qty=parseInt(document.getElementById('qtyInput').value);
+    if(!qty||qty<1){showToast('Nhập số lượng.','error');return;}
+    const p=priceCache[selectedService]||{min:10,max:5000};
+    if(qty<p.min||qty>p.max){showToast('SL từ '+p.min+' đến '+p.max,'error');return;}
+    const btn=document.getElementById('orderBtn');
+    btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Đang xử lý...';
+    hideStatus(document.getElementById('orderStatus'));
+    try{
+        const d=await callAPI({action:'add',service:selectedService,link,quantity:qty});
+        if(d.order){
+            const r=REACTIONS_MAP[selectedService]||{name:'Unknown'};
+            showStatus(document.getElementById('orderStatus'),'&#9989; Thành công!','Order ID: '+d.order,'success');
+            showToast('Đơn #'+d.order+' - '+r.name+' x'+qty,'success');
+            orderHistory.unshift({orderId:d.order,service:r.name,qty,time:new Date().toLocaleString('vi-VN'),status:'Pending'});
+            if(orderHistory.length>50)orderHistory.pop();
+            localStorage.setItem('smm_order_history',JSON.stringify(orderHistory));
+            renderHistory();
+            document.getElementById('linkInput').value='';document.getElementById('qtyInput').value='';
+        }else if(d.error){showStatus(document.getElementById('orderStatus'),'&#9888; Lỗi',d.error,'error');showToast('Lỗi: '+d.error,'error');}
+    }catch(e){showStatus(document.getElementById('orderStatus'),'&#9888; Lỗi kết nối',e.message,'error');showToast('Lỗi: '+e.message,'error');}
+    finally{btn.disabled=false;btn.innerHTML='&#10133; Đặt hàng';}
+}
+
+async function placeCommentOrder(){
+    const link=document.getElementById('commentLink').value.trim();
+    if(!link){showToast('Nhập link bài viết.','error');return;}
+    const qty=parseInt(document.getElementById('commentQty').value);
+    if(!qty||qty<1){showToast('Nhập số lượng.','error');return;}
+    const content=document.getElementById('commentContent').value.trim();
+    const btn=document.getElementById('commentOrderBtn');
+    btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Đang xử lý...';
+    hideStatus(document.getElementById('commentStatus'));
+    try{
+        const params={action:'add',service:3307,link,quantity:qty};
+        if(content) params.comment=content;
+        const d=await callAPI(params);
+        if(d.order){
+            showStatus(document.getElementById('commentStatus'),'&#9989; Đặt comment thành công!','Order ID: '+d.order,'success');
+            showToast('Đơn #'+d.order+' - Comment x'+qty,'success');
+            orderHistory.unshift({orderId:d.order,service:'Comment',qty,time:new Date().toLocaleString('vi-VN'),status:'Pending'});
+            if(orderHistory.length>50)orderHistory.pop();
+            localStorage.setItem('smm_order_history',JSON.stringify(orderHistory));
+            renderHistory();
+            document.getElementById('commentLink').value='';document.getElementById('commentQty').value='';
+        }else if(d.error){showStatus(document.getElementById('commentStatus'),'&#9888; Lỗi',d.error,'error');showToast('Lỗi: '+d.error,'error');}
+    }catch(e){showStatus(document.getElementById('commentStatus'),'&#9888; Lỗi kết nối',e.message,'error');showToast('Lỗi: '+e.message,'error');}
+    finally{btn.disabled=false;btn.innerHTML='&#10133; Đặt comment';}
+}
+
+async function checkOrder(){
+    const id=document.getElementById('checkId').value.trim();
+    if(!id){showToast('Nhập Order ID.','error');return;}
+    hideStatus(document.getElementById('checkStatus'));
+    const el=document.getElementById('checkStatus');
+    showStatus(el,'&#128260; Đang tra...','','loading');
+    try{
+        const d=await callAPI({action:'status',order:id});
+        if(d.error){showStatus(el,'&#9888; Lỗi',d.error,'error');}
+        else{
+            let st='info';
+            if(d.status==='Completed')st='success';
+            else if(d.status==='Canceled'||d.status==='Partial')st='error';
+            showStatus(el,'Trạng thái: '+d.status,'Phí: '+formatVND(parseFloat(d.charge)*VND_RATE)+' | Bắt đầu: '+d.start_count+' | Còn lại: '+d.remains,st);
+        }
+    }catch(e){showStatus(el,'&#9888; Lỗi',e.message,'error');}
+}
+
+function renderHistory(){
+    const el=document.getElementById('historyList');
+    if(orderHistory.length===0){el.innerHTML='<div class="empty">Chưa có đơn hàng nào.</div>';return;}
+    el.innerHTML=orderHistory.map(o=>'<div class="history-item"><div><div class="oid">#'+o.orderId+'</div><div class="osvc">'+escHtml(o.service)+' x'+o.qty+'</div><div class="otime">'+escHtml(o.time)+'</div></div><span class="ostatus '+o.status+'">'+o.status+'</span></div>').join('');
+}
+
+async function autoRefresh(){
+    const p=orderHistory.filter(o=>o.status==='Pending'||o.status==='Processing'||o.status==='In progress');
+    for(const o of p.slice(0,5)){
+        try{
+            const d=await callAPI({action:'status',order:o.orderId});
+            if(d.status&&d.status!==o.status){o.status=d.status;showToast('Đơn #'+o.orderId+' -> '+d.status,'info');}
+        }catch(e){}
+    }
+    localStorage.setItem('smm_order_history',JSON.stringify(orderHistory));
+    renderHistory();
+}
+
+function init(){
+    initApiKey();
+    if(API_KEY){checkBalance();loadServicePrices();renderHistory();setInterval(()=>{checkBalance();autoRefresh();},30000);}
+    document.getElementById('qtyInput').addEventListener('keydown',e=>{if(e.key==='Enter')placeOrder();});
+    document.getElementById('commentQty').addEventListener('keydown',e=>{if(e.key==='Enter')placeCommentOrder();});
+    document.getElementById('checkId').addEventListener('keydown',e=>{if(e.key==='Enter')checkOrder();});
+    document.getElementById('apikeyInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveApiKey();});
+}
+init();
+</script>
+</body>
+</html>

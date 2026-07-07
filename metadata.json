@@ -1,0 +1,6 @@
+{
+  "name": "Kawaii Expense Tracker",
+  "description": "A cute pink pastel expense tracker to manage budgets, wallets, savings goals, and view beautiful analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

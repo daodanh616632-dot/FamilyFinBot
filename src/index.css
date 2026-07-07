@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@300..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fredoka", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Custom Kawaii Pastel Theme */
+  --color-kawaii-pink-50: #FFF5F7;
+  --color-kawaii-pink-100: #FFE4E9;
+  --color-kawaii-pink-200: #FFCAD4;
+  --color-kawaii-pink-300: #FFA5B4;
+  --color-kawaii-pink-400: #FF708C;
+  --color-kawaii-pink-500: #FF4D73;
+  --color-kawaii-pink-600: #E6355B;
+  
+  --color-kawaii-mint: #B9FBC0;
+  --color-kawaii-blue: #98F5E1;
+  --color-kawaii-purple: #E8AEFF;
+  --color-kawaii-yellow: #FDFD96;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #FFF5F7;
+  color: #4A3B43;
+}
+
+/* Custom bounce animation for cute icons */
+@keyframes kawaii-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.05); }
+}
+
+.animate-kawaii-bounce {
+  animation: kawaii-bounce 2s infinite ease-in-out;
+}
+
+/* Claymorphism styles */
+.kawaii-card {
+  background: white;
+  border: 3px solid #FFCAD4;
+  border-radius: 24px;
+  box-shadow: 4px 4px 0px #FFCAD4;
+  transition: all 0.2s ease-in-out;
+}
+
+.kawaii-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px #FFCAD4;
+}
+
+.kawaii-card-active {
+  border-color: #FF708C;
+  box-shadow: 4px 4px 0px #FF708C;
+}
+
+.kawaii-button {
+  background: white;
+  border: 3px solid #FFCAD4;
+  border-radius: 18px;
+  box-shadow: 3px 3px 0px #FFCAD4;
+  transition: all 0.1s ease-in-out;
+  cursor: pointer;
+}
+
+.kawaii-button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #FFCAD4;
+}
+
+.kawaii-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #FFCAD4;
+}
+
+.kawaii-button-primary {
+  background: #FFE4E9;
+  border-color: #FF708C;
+  color: #FF4D73;
+  box-shadow: 3px 3px 0px #FF708C;
+}
+
+.kawaii-button-primary:hover {
+  box-shadow: 4px 4px 0px #FF708C;
+}
+
+.kawaii-button-primary:active {
+  box-shadow: 0px 0px 0px #FF708C;
+}
+
+/* Cute scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF5F7;
+}
+::-webkit-scrollbar-thumb {
+  background: #FFCAD4;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FF708C;
+}
